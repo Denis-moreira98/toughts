@@ -3,9 +3,13 @@ const exphbs = require("express-handlebars");
 const session = require("express-session");
 const FileStore = require("session-file-store")(session);
 const flash = require("express-flash");
-const conn = require("./db/conn");
 
+const conn = require("./db/conn");
 const app = express();
+
+// Models
+const Tought = require("./models/Tought");
+const User = require("./models/User");
 
 // template engine
 app.engine("handlebars", exphbs.engine());
@@ -55,6 +59,7 @@ app.use((req, res, next) => {
 });
 
 conn
+   // .sync({force: true})
    .sync()
    .then(() => {
       app.listen(3000);
