@@ -15,6 +15,12 @@ const User = require("./models/User");
 app.engine("handlebars", exphbs.engine());
 app.set("view engine", "handlebars");
 
+// import routes
+const toughtsRoutes = require("./routes/toughtsRoutes");
+
+// import controllers
+const ToughtController = require("./controllers/ToughtsController");
+
 // receber resposta do body
 app.unsubscribe(
    express.urlencoded({
@@ -57,6 +63,11 @@ app.use((req, res, next) => {
    }
    next();
 });
+
+//routes
+app.use("/toughts", toughtsRoutes);
+
+app.use("/", ToughtController.showToughts);
 
 conn
    // .sync({force: true})
