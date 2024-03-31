@@ -7,9 +7,8 @@ const sequelize = new Sequelize("toughts", "root", "", {
 
 try {
    sequelize.authenticate();
-   console.log("Conectamos com sucesso!");
 } catch (error) {
-   console.log(`Não foi possível coneectar: ${error}`);
+   console.log(`NÃO FOI POSSÍVEL CONECTAR AO BANCO ${error}`);
 }
 
 module.exports = sequelize;

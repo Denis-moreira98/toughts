@@ -4,26 +4,22 @@ const session = require("express-session");
 const FileStore = require("session-file-store")(session);
 const flash = require("express-flash");
 
-const conn = require("./db/conn");
 const app = express();
+
+const conn = require("./db/conn");
 
 // Models
 const Tought = require("./models/Tought");
-const User = require("./models/User");
 
-// template engine
+// routes
+const toughtsRoutes = require("./routes/toughtsRoutes");
+const authRoutes = require("./routes/authRoutes");
+const ToughtController = require("./controllers/ToughtsController");
+
 app.engine("handlebars", exphbs.engine());
 app.set("view engine", "handlebars");
 
-// import routes
-const toughtsRoutes = require("./routes/toughtsRoutes");
-const authRoutes = require("./routes/authRoutes");
-
-// import controllers
-const ToughtController = require("./controllers/ToughtsController");
-
-// receber resposta do body
-app.unsubscribe(
+app.use(
    express.urlencoded({
       extended: true,
    })
@@ -31,7 +27,7 @@ app.unsubscribe(
 
 app.use(express.json());
 
-// session middleware
+//session middleware
 app.use(
    session({
       name: "session",
@@ -40,12 +36,12 @@ app.use(
       saveUninitialized: false,
       store: new FileStore({
          logFn: function () {},
-         path: require("path").join(require("os").tmpdir(), "session"),
+         path: require("path").join(require("os").tmpdir(), "sessions"),
       }),
       cookie: {
          secure: false,
-         maxAge: 360000,
-         expires: new Date(Date.now() + 360000),
+         maxAge: 3600000,
+         expires: new Date(Date.now() + 3600000),
          httpOnly: true,
       },
    })
@@ -54,18 +50,20 @@ app.use(
 // flash messages
 app.use(flash());
 
-// public path
 app.use(express.static("public"));
 
 // set session to res
 app.use((req, res, next) => {
+   // console.log(req.session)
+   console.log(req.session.userid);
+
    if (req.session.userid) {
       res.locals.session = req.session;
    }
+
    next();
 });
 
-//routes
 app.use("/toughts", toughtsRoutes);
 app.use("/", authRoutes);
 
@@ -75,8 +73,6 @@ conn
    // .sync({force: true})
    .sync()
    .then(() => {
-      app.listen(3000);
+      app.listen(3000, () => console.log("SERVE ONLINE!"));
    })
-   .catch((err) => {
-      console.log(err);
-   });
+   .catch((err) => console.log(err));
