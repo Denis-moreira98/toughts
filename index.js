@@ -17,6 +17,7 @@ app.set("view engine", "handlebars");
 
 // import routes
 const toughtsRoutes = require("./routes/toughtsRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 // import controllers
 const ToughtController = require("./controllers/ToughtsController");
@@ -66,8 +67,9 @@ app.use((req, res, next) => {
 
 //routes
 app.use("/toughts", toughtsRoutes);
+app.use("/", authRoutes);
 
-app.use("/", ToughtController.showToughts);
+app.get("/", ToughtController.showToughts);
 
 conn
    // .sync({force: true})
