@@ -39,7 +39,7 @@ module.exports = class UserController {
       const user = {
          name,
          email,
-         password,
+         password: hashedPassword,
       };
 
       User.create(user)
@@ -59,5 +59,10 @@ module.exports = class UserController {
             });
          })
          .catch((err) => console.log(err));
+   }
+
+   static logOut(req, res) {
+      req.session.destroy();
+      res.redirect("/login");
    }
 };
