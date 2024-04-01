@@ -9,4 +9,8 @@ module.exports = class ToughtController {
    static dashboard(req, res) {
       res.render("toughts/dashboard");
    }
+
+   static createToughts(req, res) {
+      res.render("toughts/create");
+   }
 };
