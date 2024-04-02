@@ -20,9 +20,16 @@ module.exports = class ToughtController {
       if (!user) {
          res.redirect("/login");
       }
+
       const toughts = user.Toughts.map((result) => result.dataValues);
 
-      res.render("toughts/dashboard", { toughts });
+      let emptyToughts = true;
+
+      if (toughts.length > 0) {
+         emptyToughts = false;
+      }
+
+      res.render("toughts/dashboard", { toughts, emptyToughts });
    }
 
    static createToughts(req, res) {
@@ -38,7 +45,7 @@ module.exports = class ToughtController {
       try {
          await Tought.create(tought);
 
-         req.flash("message", "Pensamneto criado com sucesso!");
+         req.flash("message", "Pensamento criado com sucesso!");
 
          req.session.save(() => {
             res.redirect("/toughts/dashboard");
@@ -55,7 +62,34 @@ module.exports = class ToughtController {
       try {
          await Tought.destroy({ where: { id: id, UserId: UserId } });
 
-         req.flash("message", "Pensamneto removido com sucesso!");
+         req.flash("message", "Pensamento removido com sucesso!");
+
+         req.session.save(() => {
+            res.redirect("/toughts/dashboard");
+         });
+      } catch (error) {
+         console.log(error);
+      }
+   }
+
+   static async updateTought(req, res) {
+      const id = req.params.id;
+
+      const tought = await Tought.findOne({ where: { id: id }, raw: true });
+
+      res.render("toughts/edit", { tought });
+   }
+
+   static async updateToughtSave(req, res) {
+      const id = req.body.id;
+
+      const tought = {
+         title: req.body.title,
+      };
+
+      try {
+         await Tought.update(tought, { where: { id: id } });
+         req.flash("message", "Pensamento atualizado com sucesso!");
 
          req.session.save(() => {
             res.redirect("/toughts/dashboard");
